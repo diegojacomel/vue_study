@@ -21,6 +21,22 @@
         <div class="crad-item-description">
           {{ heroe.name }}
         </div>
+        <p v-if="heroe.description">
+          {{ heroe.description }}
+        </p>
+        <p v-else>
+          No descriptions
+        </p>
+        <div>
+          <p>
+            Movies:
+          </p>
+          <ul>
+            <li v-for="(movie, movieIndex) in heroe.stories.items" v-bind:key="movieIndex">
+              {{ movie.name }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -30,22 +46,22 @@
 import MarvelService from '../services/marvel'
 import { privateKey, publicKey } from '../utils/keys'
 import CryptoJS from 'crypto-js'
-import _ from 'lodash'
+import { debounce } from 'lodash'
 
 export default {
   name: 'SearchBar',
   data() {
     return {
       textTyped: '',
-      heroes: [],
+      heroes: []
     }
   },
   created: function() {
-    this.isLoading = true;
+    this.isLoading = true
     this.fetchHeroes()
   },
   methods: {
-    fetchHeroes: _.debounce(function(value) {
+    fetchHeroes: debounce(function(value) {
       this.isLoading = true;
 
       const timestamp = '1'
@@ -54,7 +70,7 @@ export default {
       const offset = this.heroes.length;
       const limit = this.heroes.length + 33;
 
-      MarvelService.getCharacters(timestamp, publicKey, hash, value ? value : this.textTyped, limit, offset)
+      MarvelService.getCharacters(timestamp, publicKey, hash, value ? value : '', limit, offset)
         .then(response => {
           if (response.data) {
             this.heroes = response.data.data.results
@@ -87,7 +103,7 @@ export default {
 }
 
 .card-item {
-  flex-basis: calc(33.33% - 70px);
+  flex-basis: calc(33.33% - 50px);
   margin-left: 20px;
   margin-bottom: 20px;
   border: 1px solid #cccccc;
